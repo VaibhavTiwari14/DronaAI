@@ -7,16 +7,25 @@ import DashboardView from './_components/DashboardView';
 const IndustryInsightsPage = async() => {
 
   const {isOnboarded} = await getUserOnboardingStatus();
-  const insights = await getIndustryInsights();
   
     if(!isOnboarded){
       redirect("/onboarding");
     }
-  return (
-    <div className='container mx-auto'>
-      <DashboardView insights={insights}/>
-    </div>
-  )
+    
+    try {
+      const insights = await getIndustryInsights();
+      return (
+        <div className='container mx-auto'>
+          <DashboardView insights={insights}/>
+        </div>
+      );
+    } catch (error) {
+      if (error.message === "Industry parameter is required") {
+        redirect("/onboarding");
+      }
+      throw error; 
+    }
+
 }
 
 export default IndustryInsightsPage
